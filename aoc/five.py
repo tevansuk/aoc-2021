@@ -1,6 +1,7 @@
 from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Iterable
 
 
 @dataclass(frozen=True)
@@ -49,7 +50,7 @@ def vert_horiz_overlaps(lines: list[Line]) -> int:
     return overlaps(line for line in lines if line.is_vertical or line.is_horizontal)
 
 
-def overlaps(lines: list[Line]) -> int:
+def overlaps(lines: Iterable[Line]) -> int:
     c = Counter(coord for line in lines for coord in line.points)
     return sum(1 for v in c.values() if v > 1)
 

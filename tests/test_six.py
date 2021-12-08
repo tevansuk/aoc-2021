@@ -17,8 +17,8 @@ def test_parse_data(data) -> None:
 
 def test_age(data) -> None:
     day_1 = age(data, 1)
-    assert day_1.total() == 5
+    assert sum(day_1.values()) == 5
     day_5 = age(data, 5)
-    assert day_5.total() == 10
+    assert sum(day_5.values()) == 10
     day_256 = age(data, 256)
-    assert day_256.total() == 26984457539
+    assert sum(day_256.values()) == 26984457539

@@ -7,9 +7,9 @@ N = [7, 5, 4, 3, 2, 1, 0]
 def main(datafile: Path) -> None:
     data = parse_data(datafile)
     day_80 = age(data, 80)
-    print(f"Q1: {day_80.total()}")
+    print(f"Q1: {sum(day_80.values())}")
     day_256 = age(data, 256)
-    print(f"Q2: {day_256.total()}")
+    print(f"Q2: {sum(day_256.values())}")
 
 
 def age(data: Counter, days: int) -> Counter:

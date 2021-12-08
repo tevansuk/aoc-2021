@@ -37,15 +37,16 @@ def parse_boards(datafile: Path) -> tuple[DrawList, BoardList]:
     return draws, boards
 
 
-def winner_winner_chicken_dinner(draws, boards) -> Optional["Board"]:
+def winner_winner_chicken_dinner(draws, boards) -> "Board":
     for number in draws:
         for board in boards:
             board.draw(number)
             if board.is_bingo:
                 return board
+    raise Exception("No board won at all - seems unlikely")
 
 
-def let_the_wookie_win(draws, boards) -> Optional["Board"]:
+def let_the_wookie_win(draws, boards) -> "Board":
     last_winner = None
     for number in draws:
         for board in boards:
@@ -53,6 +54,8 @@ def let_the_wookie_win(draws, boards) -> Optional["Board"]:
                 board.draw(number)
                 if board.is_bingo:
                     last_winner = board
+    if not last_winner:
+        raise Exception("No board won last - seems unlikely")
     return last_winner
 
 
@@ -73,7 +76,7 @@ class Board:
 
     @property
     def score(self) -> int:
-        if not self.is_bingo:
+        if self.winning_number is None:
             return 0
         return self.winning_number * sum(
             self.cells[pos] for pos in range(DIM ** 2) if pos not in self.matches
