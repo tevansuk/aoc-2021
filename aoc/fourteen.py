@@ -12,7 +12,6 @@ class Data:
         data = cls()
         data.polymer, _, *mut = fp.read().split("\n")
         data.mutations = {p[0]: p[1] for m in mut if m and (p := m.split(" -> "))}
-        # data.mutations = dict(m.split(" -> ") for m in mut if m)
         return data
 
     def step(self) -> None:
@@ -43,15 +42,12 @@ class Data:
 
 
 def main(datafile: Path) -> None:
-    data = parse_data(datafile)
-    print(f"Q1: {q1(data) = }")
-    data = parse_data(datafile)
-    print(f"Q2: {q2(data) = }")
-
-
-def parse_data(datafile: Path) -> Data:
     with datafile.open() as fp:
-        return Data.parse(fp)
+        data = Data.parse(fp)
+    print(f"Q1: {q1(data) = }")
+    with datafile.open() as fp:
+        data = Data.parse(fp)
+    print(f"Q2: {q2(data) = }")
 
 
 def q1(data: Data) -> int:

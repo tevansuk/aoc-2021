@@ -1,29 +1,12 @@
 from functools import reduce
 from operator import mul
 from pathlib import Path
-from typing import Iterable, TextIO
+from typing import Iterable
+
+from .ds.grids import Grid
 
 
-class Data(list[int]):
-    width: int
-
-    @classmethod
-    def read(cls, fp: TextIO) -> "Data":
-        data = cls(int(c) for c in fp.readline().strip())
-        data.width = len(data)
-        data.extend(int(c) for c in fp.read() if c.isdigit())
-        return data
-
-    def adjacent(self, pos: int) -> Iterable[int]:
-        if pos % self.width > 0:
-            yield pos - 1
-        if (pos + 1) % self.width:
-            yield pos + 1
-        if pos >= self.width:
-            yield pos - self.width
-        if pos + self.width < len(self):
-            yield pos + self.width
-
+class Data(Grid[int]):
     def lowpoints(self) -> Iterable[int]:
         return (
             pos
@@ -44,14 +27,10 @@ class Data(list[int]):
 
 
 def main(datafile: Path) -> None:
-    data = parse_data(datafile)
+    with datafile.open() as fp:
+        data = Data.parse(fp)
     print(f"Q1: {q1(data) = }")
     print(f"Q2: {q2(data) = }")
-
-
-def parse_data(datafile: Path) -> Data:
-    with datafile.open() as fp:
-        return Data.read(fp)
 
 
 def q1(data: Data) -> int:

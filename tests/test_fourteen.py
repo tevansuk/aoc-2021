@@ -3,12 +3,13 @@ from pathlib import Path
 
 import pytest
 
-from aoc.fourteen import Data, parse_data, q1, q2
+from aoc.fourteen import Data, q1, q2
 
 
 @pytest.fixture
 def data() -> Data:
-    return parse_data(Path(__file__).parent / "fourteen.txt")
+    with (Path(__file__).parent / "fourteen.txt").open() as fp:
+        return Data.parse(fp)
 
 
 def test_parse_data(data: Data) -> None:

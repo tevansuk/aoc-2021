@@ -2,22 +2,25 @@ from pathlib import Path
 
 import pytest
 
-from aoc.twelve import Graph, parse_graph, q1, q2
+from aoc.twelve import Graph, q1, q2
 
 
 @pytest.fixture
 def graph() -> Graph:
-    return parse_graph(Path(__file__).parent / "twelve.txt")
+    with (Path(__file__).parent / "twelve.txt").open() as fp:
+        return Graph.parse(fp, "-")
 
 
 @pytest.fixture
 def graph_big() -> Graph:
-    return parse_graph(Path(__file__).parent / "twelve-1.txt")
+    with (Path(__file__).parent / "twelve-1.txt").open() as fp:
+        return Graph.parse(fp, "-")
 
 
 @pytest.fixture
 def graph_bigger() -> Graph:
-    return parse_graph(Path(__file__).parent / "twelve-2.txt")
+    with (Path(__file__).parent / "twelve-2.txt").open() as fp:
+        return Graph.parse(fp, "-")
 
 
 def test_parse_graph(graph: Graph) -> None:

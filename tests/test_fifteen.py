@@ -2,21 +2,23 @@ from pathlib import Path
 
 import pytest
 
-from aoc.fifteen import Data, parse_data, q1, q2
+from aoc.fifteen import Data, q1, q2
 
 
 @pytest.fixture
 def data() -> Data:
-    return parse_data(Path(__file__).parent / "fifteen.txt")
+    with (Path(__file__).parent / "fifteen.txt").open() as fp:
+        return Data.parse(fp)
 
 
 @pytest.fixture
 def magnified() -> Data:
-    return parse_data(Path(__file__).parent / "fifteen-magnified.txt")
+    with (Path(__file__).parent / "fifteen-magnified.txt").open() as fp:
+        return Data.parse(fp)
 
 
 def test_parse_data(data: Data) -> None:
-    assert len(data.grid) == 100
+    assert len(data) == 100
 
 
 def test_q1(data: Data) -> None:
@@ -24,11 +26,11 @@ def test_q1(data: Data) -> None:
 
 
 def test_magnify(data: Data, magnified: Data) -> None:
-    assert len(magnified.grid) == 2500
+    assert len(magnified) == 2500
     big = data.magnify(5)
-    assert len(magnified.grid) == len(big.grid)
-    for pos in range(len(magnified.grid)):
-        assert magnified.grid[pos] == big.grid[pos]
+    assert len(magnified) == len(big)
+    for pos in range(len(magnified)):
+        assert magnified[pos] == big[pos]
 
 
 def test_q2(data: Data) -> None:
