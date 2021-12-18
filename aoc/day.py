@@ -12,6 +12,7 @@ def main():
         print("Usage: poetry day [N]")
         sys.exit(-1)
     day = int(sys.argv[1])
+    args = sys.argv[2:]
     print(f"Yo its day {day}")
     dayw = num2words(day).replace("-", "_")
     module_name = f"aoc.{dayw}"
@@ -23,7 +24,7 @@ def main():
         print(f"No such module/function {module_name}.main")
         sys.exit(-1)
     print(f"Running {module_name}.main")
-    sys.exit(func(input_file))
+    sys.exit(func(input_file, *args))
 
 
 def make_my_day():
