@@ -66,6 +66,8 @@ class Grid(list[T], MutableSequence[T]):
     w: int
     h: int
     value_type: Type[T]
+    output_separator: str = ""
+    value_formatter: Callable[[int], str] = str
 
     def __init__(self, value_type: Type[T], *args, **kwargs):
         self.value_type = value_type
@@ -129,3 +131,13 @@ class Grid(list[T], MutableSequence[T]):
         copy.w = self.w
         copy.h = self.h
         return copy
+
+    def __str__(self):
+        return "\n".join(
+            (
+                self.output_separator.join(
+                    self.value_formatter(v) for v in self[j * self.w : j * self.w + self.w]
+                )
+                for j in range(self.h)
+            )
+        )
