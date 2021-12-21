@@ -1,10 +1,8 @@
-from io import StringIO
-
 from aoc.ds.grids import Grid
 
 
 def test_grid():
-    grid = Grid[int].parse(StringIO("123\n456\n789\n"))
+    grid = Grid[int].parse("123\n456\n789\n")
 
     assert len(grid) == 9
     assert grid.w == 3

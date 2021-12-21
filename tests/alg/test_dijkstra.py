@@ -1,5 +1,3 @@
-from io import StringIO
-
 from aoc.alg import dijkstra
 from aoc.ds.grids import Grid
 from aoc.ds.utils import grid_to_graph
@@ -7,8 +5,7 @@ from aoc.ds.utils import grid_to_graph
 
 def test_dijkstra():
     # Works with any data structure
-    fp = StringIO(
-        """1163751742
+    data = """1163751742
 1381373672
 2136511328
 3694931569
@@ -18,8 +15,7 @@ def test_dijkstra():
 3125421639
 1293138521
 2311944581"""
-    )
-    grid = Grid[int].parse(fp)
+    grid = Grid[int].parse(data)
     start = 0
     end = len(grid) - 1
 

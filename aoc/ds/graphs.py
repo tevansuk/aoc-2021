@@ -1,6 +1,6 @@
 from collections import defaultdict
 from collections.abc import MutableMapping
-from typing import Iterable, TextIO, Type, TypeVar
+from typing import Iterable, Type, TypeVar
 
 Vertex = TypeVar("Vertex", int, str)
 Cost = int
@@ -27,13 +27,13 @@ class AdjacencyListGraph(defaultdict[Vertex, AdjacencyList], BaseGraph):
     @classmethod
     def parse(
         cls: Type[Graph],
-        fp: TextIO,
+        data: str,
         split: str,
         bidi: bool = True,
         vertex_type: Type[Vertex] = str,
     ) -> Graph:
         graph = cls()
-        for line in fp.readlines():
+        for line in data.strip().split("\n"):
             v_from, v_to = line.strip().split(split)
             graph[vertex_type(v_from)][vertex_type(v_to)] = 0
             if bidi:
@@ -42,10 +42,10 @@ class AdjacencyListGraph(defaultdict[Vertex, AdjacencyList], BaseGraph):
 
     @classmethod
     def parse_with_costs(
-        cls: Type[Graph], fp: TextIO, split: str, vertex_type: Type[Vertex] = str
+        cls: Type[Graph], data: str, split: str, vertex_type: Type[Vertex] = str
     ) -> Graph:
         graph = cls()
-        for line in fp.readlines():
+        for line in data.strip().split("\n"):
             v_from, v_to, cost = line.strip().split(split)
             graph[vertex_type(v_from)][vertex_type(v_to)] = Cost(cost)
         return graph

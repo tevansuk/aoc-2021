@@ -1,9 +1,13 @@
 from collections.abc import MutableSequence
-from typing import Callable, Iterable, Optional, TextIO, Type, TypeVar
+from itertools import product
+from typing import Callable, Iterable, Optional, Type, TypeVar
 
 T = TypeVar("T", int, str)
 B = TypeVar("B", bound="Grid")
 ValueParser = Callable[[str], Iterable[T]]
+Coord = tuple[int, int]
+_3X3 = list(product([-1, 0, 1], repeat=2))
+_ADJ = [(0, -1), (-1, 0), (1, 0), (0, 1)]
 
 
 def int_digit_value_parser(text: str) -> Iterable[int]:
@@ -29,7 +33,7 @@ def int_number_value_parser(separator: Optional[str] = None) -> ValueParser:
     """
 
     def parser(text: str) -> Iterable[int]:
-        return (int(c) for line in text.split("\n") for c in line.split(separator))
+        return (int(c) for line in text.strip().split("\n") for c in line.split(separator))
 
     return parser
 
@@ -57,9 +61,16 @@ def str_value_parser(separator: Optional[str] = None) -> ValueParser:
     """
 
     def parser(text: str) -> Iterable[str]:
-        return (val for line in text.split("\n") for val in line.split(separator))
+        return (val for line in text.strip().split("\n") for val in line.split(separator))
 
     return parser
+
+
+def hash_dot_parser(text: str) -> Iterable[int]:
+    return (".#".index(c) for c in text if c in ".#")
+
+
+block_formatter = " █".__getitem__
 
 
 class Grid(list[T], MutableSequence[T]):
@@ -67,7 +78,7 @@ class Grid(list[T], MutableSequence[T]):
     h: int
     value_type: Type[T]
     output_separator: str = ""
-    value_formatter: Callable[[int], str] = str
+    value_formatter: Callable[[T], str] = str
 
     def __init__(self, value_type: Type[T], *args, **kwargs):
         self.value_type = value_type
@@ -76,7 +87,7 @@ class Grid(list[T], MutableSequence[T]):
     @classmethod
     def parse(
         cls: Type[B],
-        fp: TextIO,
+        data: str,
         parser: ValueParser = int_digit_value_parser,
         value_type: Type[T] = int,
     ) -> B:
@@ -87,39 +98,62 @@ class Grid(list[T], MutableSequence[T]):
             345
             678
         """
-        grid = cls(value_type, parser(fp.readline()))
+        lines = data.strip().split("\n", 1)
+        grid = cls(value_type, parser(lines[0]))
         grid.w = len(grid)
-        grid.extend(parser(fp.read()))
+        if len(lines) > 1:
+            grid.extend(parser(lines[1]))
         grid.h = len(grid) // grid.w
         return grid
 
-    def adjacent(self, pos: int):
+    def adjacent(self, pos: int) -> Iterable[int]:
         """
         The points in the grid that are above, below, left and right of the pos
         """
-        x, y = self.pos2coord(pos)
-        if x > 0:
-            yield pos - 1
-        if x + 1 < self.w:
-            yield pos + 1
-        if y > 0:
-            yield pos - self.w
-        if y + 1 < self.h:
-            yield pos + self.w
+        return (i + j * self.w for i, j in self.xyadjacent(*self.pos2coord(pos)))
 
-    def surrounding(self, pos: int):
+    def surrounding(self, pos: int) -> Iterable[int]:
         """
         The points surrounding the pos, eg adjacent() + diagonals
+        """
+        return self.containing(pos, False)
+
+    def containing(self, pos: int, include_pos=True) -> Iterable[int]:
+        """
+        3x3 grid positions surrounding pos. Inside the grid only - use xycontaining
+        for positions outside the grid
         """
         x, y = self.pos2coord(pos)
         return (
             i + j * self.w
-            for i in range(x - 1, x + 2)
-            for j in range(y - 1, y + 2)
-            if i >= 0 and j >= 0 and i < self.w and j < self.h and (i, j) != (x, y)
+            for i, j in self.xycontaining(x, y, outside=False, include_self=include_pos)
         )
 
-    def pos2coord(self, pos: int) -> tuple[int, int]:
+    def xycontaining(
+        self, x: int, y: int, outside: bool = False, include_self: bool = True
+    ) -> Iterable[Coord]:
+        """
+        3x3 grid positions surrounding (x,y).
+            outside: include positions outside the grid.
+            include_self: include (x,y)
+        """
+        return (
+            ij
+            for (dy, dx) in _3X3
+            if (ij := (x + dx, y + dy))
+            and (outside or (0 <= ij[0] < self.w and 0 <= ij[1] < self.h))
+            and (include_self or ij != (x, y))
+        )
+
+    def xyadjacent(self, x: int, y: int, outside: bool = False) -> Iterable[Coord]:
+        return (
+            ij
+            for (dy, dx) in _ADJ
+            if (ij := (x + dx, y + dy))
+            and (outside or (0 <= ij[0] < self.w and 0 <= ij[1] < self.h))
+        )
+
+    def pos2coord(self, pos: int) -> Coord:
         """position to cartesian coordinates"""
         return pos % self.w, pos // self.w
 
@@ -127,16 +161,22 @@ class Grid(list[T], MutableSequence[T]):
         return range(len(self))
 
     def copy(self: B) -> B:
-        copy = self.__class__(self)
+        copy = self.__class__(self.value_type, self)
         copy.w = self.w
         copy.h = self.h
         return copy
 
-    def __str__(self):
+    def get(self, x: int, y: int, default: T = None) -> T:
+        """Get using x,y co-ords, returning a default if outside the grid"""
+        if any((x < 0, y < 0, x >= self.w, y >= self.h)):
+            return default
+        return self[x + y * self.w]
+
+    def __str__(self) -> str:
         return "\n".join(
             (
                 self.output_separator.join(
-                    self.value_formatter(v) for v in self[j * self.w : j * self.w + self.w]
+                    self.value_formatter(v) for v in self[j * self.w : (j + 1) * self.w]
                 )
                 for j in range(self.h)
             )
