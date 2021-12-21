@@ -2,7 +2,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from itertools import product
 from pathlib import Path
-from typing import Iterator, TextIO
+from typing import Iterator
 
 Coord = tuple[int, int, int]
 Beacons = set[Coord]
@@ -16,10 +16,10 @@ class Scanner:
     origin: tuple[int, int, int] = (0, 0, 0)
 
     @classmethod
-    def parse(cls, fp: TextIO, sid: int) -> "Scanner":
+    def parse(cls, data: list[str], sid: int) -> "Scanner":
         readings = []
-        while (line := fp.readline().strip()) != "":
-            x, y, z = map(int, line.strip().split(","))
+        for line in data:
+            x, y, z = map(int, line.split(","))
             readings.append(all_rotations((x, y, z)))
         return cls(id=sid, readings=[*zip(*readings)])  # type: ignore
 
@@ -46,11 +46,12 @@ class Scanner:
 
 class Scanners(list[Scanner]):
     @classmethod
-    def parse(cls, fp: TextIO) -> "Scanners":
+    def parse(cls, data: str) -> "Scanners":
         scanners = cls()
-        while line := fp.readline():
-            sid = int(line.split()[2])
-            scanners.append(Scanner.parse(fp, sid))
+        for sc in data.strip().split("\n\n"):
+            head, *coords = sc.split("\n")
+            sid = int(head.split()[2])
+            scanners.append(Scanner.parse(coords, sid))
         return scanners
 
     def orientate_scanners(self) -> Beacons:
@@ -92,8 +93,7 @@ def main(datafile: Path) -> None:
 
 
 def parse_data(datafile: Path) -> Scanners:
-    with datafile.open() as fp:
-        return Scanners.parse(fp)
+    return Scanners.parse(datafile.read_text())
 
 
 def q1(scanners: Scanners) -> int:

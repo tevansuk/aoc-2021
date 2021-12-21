@@ -7,8 +7,7 @@ from aoc.nine import Data, q1, q2
 
 @pytest.fixture
 def data() -> Data:
-    with (Path(__file__).parent / "nine.txt").open() as fp:
-        return Data.parse(fp)
+    return Data.parse((Path(__file__).parent / "nine.txt").read_text())
 
 
 def test_parse_data(data: Data) -> None:

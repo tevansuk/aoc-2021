@@ -29,8 +29,7 @@ class Data(Grid[int]):
 
 
 def main(datafile: Path) -> None:
-    with datafile.open() as fp:
-        data = Data.parse(fp)
+    data = Data.parse(datafile.read_text())
     print(f"Q1: {q1(data) = }")
     print(f"Q2: {q2(data) = }")
 

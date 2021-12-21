@@ -80,8 +80,7 @@ class Packet:
 
 
 def main(datafile: Path) -> None:
-    with datafile.open() as fp:
-        data = fp.readline().strip()
+    data = datafile.read_text().strip()
     print(f"Q1: {q1(data) = }")
     print(f"Q2: {q2(data) = }")
 

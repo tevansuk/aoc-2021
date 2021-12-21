@@ -67,8 +67,7 @@ def calculate_output_reading(obs: Readings, output: Readings) -> int:
 
 def parse_data(datafile: Path) -> Data:
     data = Data()
-    with datafile.open() as fp:
-        for line in fp.readlines():
-            all_vals = [Reading(word) for part in line.split("|") for word in part.split()]
-            data.append((all_vals[0:10], all_vals[-4:]))
+    for line in datafile.read_text().strip().split("\n"):
+        all_vals = [Reading(word) for part in line.split("|") for word in part.split()]
+        data.append((all_vals[0:10], all_vals[-4:]))
     return data

@@ -526,8 +526,7 @@ def main(datafile: Path, num_type=None) -> None:
 
 def parse_data(datafile: Path, num_type) -> list[Number]:
     Number = NUMBER_TYPES[num_type]
-    with datafile.open() as fp:
-        return [Number.parse(line) for line in fp.readlines()]
+    return [Number.parse(line) for line in datafile.read_text().strip().split("\n")]
 
 
 def q1(all_nums: list[Number]) -> int:

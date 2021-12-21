@@ -46,8 +46,7 @@ class Graph(AdjacencyListGraph[str]):
 
 
 def main(datafile: Path) -> None:
-    with datafile.open() as fp:
-        graph = Graph.parse(fp, "-")
+    graph = Graph.parse(datafile.read_text(), "-")
     print(f"Q1: {q1(graph) = }")
     print(f"Q2: {q2(graph) = }")
 

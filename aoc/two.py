@@ -17,10 +17,9 @@ class State:
 
 def main(data):
     state = State()
-    with data.open() as fp:
-        for line in fp.readlines():
-            verb, count = line.split()
-            state(verb, int(count))
+    for line in data.read_text().strip().split("\n"):
+        verb, count = line.split()
+        state(verb, int(count))
     print(f"Depth: {state.aim}\tHorizontal: {state.horiz}")
     print(f"Q1: {state.aim * state.horiz}")
     print(f"Depth: {state.depth}\tHorizontal: {state.horiz}\tAim: {state.aim}")

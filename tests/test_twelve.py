@@ -7,20 +7,17 @@ from aoc.twelve import Graph, q1, q2
 
 @pytest.fixture
 def graph() -> Graph:
-    with (Path(__file__).parent / "twelve.txt").open() as fp:
-        return Graph.parse(fp, "-")
+    return Graph.parse((Path(__file__).parent / "twelve.txt").read_text(), "-")
 
 
 @pytest.fixture
 def graph_big() -> Graph:
-    with (Path(__file__).parent / "twelve-1.txt").open() as fp:
-        return Graph.parse(fp, "-")
+    return Graph.parse((Path(__file__).parent / "twelve-1.txt").read_text(), "-")
 
 
 @pytest.fixture
 def graph_bigger() -> Graph:
-    with (Path(__file__).parent / "twelve-2.txt").open() as fp:
-        return Graph.parse(fp, "-")
+    return Graph.parse((Path(__file__).parent / "twelve-2.txt").read_text(), "-")
 
 
 def test_parse_graph(graph: Graph) -> None:

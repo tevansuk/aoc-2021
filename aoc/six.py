@@ -1,6 +1,8 @@
 from collections import Counter
 from pathlib import Path
 
+from aoc.ds.grids import int_number_value_parser
+
 N = [7, 5, 4, 3, 2, 1, 0]
 
 
@@ -19,5 +21,4 @@ def age(data: Counter, days: int) -> Counter:
 
 
 def parse_data(datafile: Path) -> Counter:
-    with datafile.open() as fp:
-        return Counter(int(val) for line in fp.readlines() for val in line.split(","))
+    return Counter(int_number_value_parser(",")(datafile.read_text()))

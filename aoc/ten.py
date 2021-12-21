@@ -26,8 +26,7 @@ def main(datafile: Path) -> None:
 
 
 def parse_data(datafile: Path) -> Data:
-    with datafile.open() as fp:
-        return [line.strip() for line in fp.readlines()]
+    return datafile.read_text().strip().split("\n")
 
 
 def q1(data: Data) -> int:

@@ -7,14 +7,12 @@ from aoc.fifteen import Data, q1, q2
 
 @pytest.fixture
 def data() -> Data:
-    with (Path(__file__).parent / "fifteen.txt").open() as fp:
-        return Data.parse(fp)
+    return Data.parse((Path(__file__).parent / "fifteen.txt").read_text())
 
 
 @pytest.fixture
 def magnified() -> Data:
-    with (Path(__file__).parent / "fifteen-magnified.txt").open() as fp:
-        return Data.parse(fp)
+    return Data.parse((Path(__file__).parent / "fifteen-magnified.txt").read_text())
 
 
 def test_parse_data(data: Data) -> None:

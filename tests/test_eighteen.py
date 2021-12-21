@@ -8,8 +8,7 @@ from aoc.eighteen import NUMBER_TYPES, Number, NumberDumb, q1, q2
 
 @pytest.fixture
 def data() -> list[str]:
-    with (Path(__file__).parent / "eighteen.txt").open() as fp:
-        return [line.strip() for line in fp.readlines()]
+    return (Path(__file__).parent / "eighteen.txt").read_text().strip().split("\n")
 
 
 @pytest.mark.parametrize("Number", NUMBER_TYPES.values())

@@ -20,7 +20,6 @@ def test_parse_data(data: Data) -> None:
 def test_xy2num(data):
     assert data.image.xy2num(2, 2, 0) == 34
     assert data.image.xy2num(0, 0, 0) == 18
-    assert data.get_pixel(data.image, 2, 2, 0) == 1
 
 
 def test_q1(data: Data) -> None:

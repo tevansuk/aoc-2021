@@ -15,8 +15,7 @@ def tri(n: int) -> int:
 
 
 def parse_data(datafile: Path) -> Target:
-    with datafile.open() as fp:
-        return tuple(map(int, re.findall(r"[-\d]+", fp.readline())))
+    return tuple(map(int, re.findall(r"[-\d]+", datafile.read_text().strip())))
 
 
 def main(datafile: Path):

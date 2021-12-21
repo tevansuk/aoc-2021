@@ -1,10 +1,10 @@
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
+from aoc.ds import grids
+
 DrawList = list[int]
 BoardList = list["Board"]
-Cells = list[int]
 CellMatches = set[int]
 DIM = 5
 BINGOS = [range(x, DIM ** 2, DIM) for x in range(DIM)] + [
@@ -27,13 +27,9 @@ def main(datafile: Path):
 
 
 def parse_boards(datafile: Path) -> tuple[DrawList, BoardList]:
-    with datafile.open() as fp:
-        draws = [int(draw) for draw in fp.readline().split(",")]
-        cells = [int(num) for num in fp.read().split()]
-    boards = [
-        Board(cells=cells[pos : pos + DIM ** 2], matches=set())
-        for pos in range(0, len(cells), DIM ** 2)
-    ]
+    raw_draws, *raw_boards = datafile.read_text().split("\n\n")
+    boards = [Board.parse(board, grids.int_number_value_parser()) for board in raw_boards]
+    draws = DrawList(grids.int_number_value_parser(",")(raw_draws))
     return draws, boards
 
 
@@ -59,17 +55,19 @@ def let_the_wookie_win(draws, boards) -> "Board":
     return last_winner
 
 
-@dataclass
-class Board:
-    cells: Cells
+class Board(grids.Grid[int]):
     matches: CellMatches
     is_bingo = False
     winning_number: Optional[int] = None
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.matches = CellMatches()
+
     def draw(self, number) -> None:
         if self.is_bingo:
             return
-        self.matches.update(pos for pos in range(DIM ** 2) if self.cells[pos] == number)
+        self.matches.update(pos for pos in range(len(self)) if self[pos] == number)
         if any(all(pos in self.matches for pos in bingo) for bingo in BINGOS):
             self.is_bingo = True
             self.winning_number = number
@@ -79,7 +77,7 @@ class Board:
         if self.winning_number is None:
             return 0
         return self.winning_number * sum(
-            self.cells[pos] for pos in range(DIM ** 2) if pos not in self.matches
+            self[pos] for pos in range(len(self)) if pos not in self.matches
         )
 
     def reset(self) -> None:

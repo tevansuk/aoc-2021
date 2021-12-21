@@ -56,8 +56,7 @@ def overlaps(lines: Iterable[Line]) -> int:
 
 
 def parse_lines(datafile: Path) -> list[Line]:
-    with datafile.open() as fp:
-        return [
-            Line(*(Coord(*map(int, val.split(","))) for val in line.split(" -> ")))
-            for line in fp.readlines()
-        ]
+    return [
+        Line(*(Coord(*map(int, val.split(","))) for val in line.split(" -> ")))
+        for line in datafile.read_text().strip().split("\n")
+    ]

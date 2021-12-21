@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from aoc.ds.grids import int_number_value_parser
+
 
 def main(datafile: Path) -> None:
     data = parse_data(datafile)
@@ -23,5 +25,4 @@ def costs2(data: list[int]) -> list[int]:
 
 
 def parse_data(datafile: Path) -> list[int]:
-    with datafile.open() as fp:
-        return [int(val) for line in fp.readlines() for val in line.split(",")]
+    return list(int_number_value_parser(",")(datafile.read_text()))

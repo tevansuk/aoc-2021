@@ -2,8 +2,7 @@ from collections import Counter
 
 
 def main(datafile):
-    with datafile.open() as fp:
-        data = [line.strip() for line in fp.readlines()]
+    data = datafile.read_text().strip().split("\n")
     idata = [int(d, 2) for d in data]
     bits = len(data[0])
 

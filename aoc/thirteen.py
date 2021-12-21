@@ -1,5 +1,6 @@
 from pathlib import Path
-from typing import TextIO
+
+from aoc.ds import grids
 
 Point = tuple[int, int]
 Fold = tuple[bool, int]
@@ -14,14 +15,17 @@ class Data:
         self.folds = list[Fold]()
 
     @classmethod
-    def parse_data(cls, fp: TextIO) -> "Data":
+    def parse_data(cls, text: str) -> "Data":
         data = cls()
-        while (line := fp.readline()) != "\n":
-            x, y = (int(c) for c in line.strip().split(","))
-            data.points.add((x, y))
-        for line in fp.readlines():
-            direction, pos = line.split()[2].split("=")
-            data.folds.append((direction == "x", int(pos)))
+        points, folds = text.strip().split("\n\n")
+        data.points = set(
+            (int(xy[0]), int(xy[1])) for line in points.split("\n") if (xy := line.split(","))
+        )
+        data.folds = list(
+            (dp[0] == "x", int(dp[1]))
+            for line in folds.split("\n")
+            if (dp := line.split()[2].split("="))
+        )
         data.folds.reverse()
         return data
 
@@ -43,7 +47,7 @@ class Data:
     def __str__(self) -> str:
         return "\n".join(
             "".join(
-                "█" if (x, y) in self.points else " "
+                grids.block_formatter(bool((x, y) in self.points))
                 for x in range(max(p[0] for p in self.points) + 1)
             )
             for y in range(max(p[1] for p in self.points) + 1)
@@ -58,8 +62,7 @@ def main(datafile: Path) -> None:
 
 
 def parse_data(datafile: Path) -> Data:
-    with datafile.open() as fp:
-        return Data.parse_data(fp)
+    return Data.parse_data(datafile.read_text())
 
 
 def q1(data: Data) -> int:

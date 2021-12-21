@@ -1,6 +1,6 @@
 from collections import Counter
 from pathlib import Path
-from typing import Iterable, TextIO
+from typing import Iterable
 
 
 class Data:
@@ -8,10 +8,10 @@ class Data:
     mutations: dict[str, str]
 
     @classmethod
-    def parse(cls, fp: TextIO) -> "Data":
+    def parse(cls, text: str) -> "Data":
         data = cls()
-        data.polymer, _, *mut = fp.read().split("\n")
-        data.mutations = {p[0]: p[1] for m in mut if m and (p := m.split(" -> "))}
+        data.polymer, _, *mut = text.strip().split("\n")
+        data.mutations = {p[0]: p[1] for m in mut if (p := m.split(" -> "))}
         return data
 
     def step(self) -> None:
@@ -42,11 +42,9 @@ class Data:
 
 
 def main(datafile: Path) -> None:
-    with datafile.open() as fp:
-        data = Data.parse(fp)
+    data = Data.parse(datafile.read_text())
     print(f"Q1: {q1(data) = }")
-    with datafile.open() as fp:
-        data = Data.parse(fp)
+    data = Data.parse(datafile.read_text())
     print(f"Q2: {q2(data) = }")
 
 
