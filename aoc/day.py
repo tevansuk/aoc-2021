@@ -8,7 +8,7 @@ from num2words import num2words
 
 
 def main():
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2:
         print("Usage: poetry day [N]")
         sys.exit(-1)
     day = int(sys.argv[1])

@@ -6,7 +6,7 @@ from .ds.grids import Grid
 
 class Data(Grid[int]):
     def cheapest_path(self) -> int:
-        _, score = dijkstra(0, len(self) - 1, self.positions, self.adjacent, self.get_cost)
+        _, score = dijkstra(0, len(self) - 1, self.adjacent, self.get_cost)
         return score
 
     def get_cost(self, from_pos: int, to_pos: int):

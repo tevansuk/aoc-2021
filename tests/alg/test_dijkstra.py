@@ -22,12 +22,12 @@ def test_dijkstra():
     def get_cost(vertex, adjacent):
         return grid[adjacent]
 
-    path, cost = dijkstra(start, end, grid.positions, grid.adjacent, get_cost)
+    path, cost = dijkstra(start, end, grid.adjacent, get_cost)
     assert cost == 40
     assert path == [0, 10, 20, 21, 22, 23, 24, 25, 26, 36, 37, 47, 57, 58, 68, 78, 88, 89, 99]
 
     # And with an adjacency list graph...
     graph = grid_to_graph(grid, grid.adjacent, get_cost)
-    npath, ncost = dijkstra(start, end, graph.vertices, graph.adjacent, graph.cost)
+    npath, ncost = dijkstra(start, end, graph.adjacent, graph.cost)
     assert ncost == cost
     assert npath == path
