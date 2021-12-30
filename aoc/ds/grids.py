@@ -157,6 +157,9 @@ class Grid(list[T], MutableSequence[T]):
         """position to cartesian coordinates"""
         return pos % self.w, pos // self.w
 
+    def coord2pos(self, x: int, y: int) -> int:
+        return y * self.w + x
+
     def positions(self) -> Iterable[int]:
         return range(len(self))
 
