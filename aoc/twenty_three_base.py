@@ -50,11 +50,9 @@ class Board:
         return self.__class__(rooms=tuple(tuple(room) for room in rooms), move=move)
 
     def moves(self) -> list[Move]:
-        moves = self.hallway_to_room_moves()
-        if moves:
+        if moves := self.hallway_to_room_moves():
             return moves
-        moves = self.room_to_room_moves()
-        if moves:
+        if moves := self.room_to_room_moves():
             return moves
         return self.room_to_hallway_moves()
 
@@ -106,7 +104,6 @@ class Board:
             idx, piece = top
             # Can move to any hallway space thats not a door not occupied by a piece
             # if nothing is blocking it
-            # Going left
             for direction in (range(DOORS[ridx], -1, -1), range(DOORS[ridx], len(self.rooms[0]))):
                 for hidx in direction:
                     if hidx in DOORS:

@@ -43,8 +43,8 @@ def _animate(stdscr: Window, path: list[Board], cost: int):
         stdscr.refresh()
         time.sleep(1)
     bsize = len(str(board).split("\n"))
-    stdscr.addstr(bsize + 2, 0, f"Puzzle complete! Min cost {cost}")
-    stdscr.addstr(bsize + 4, 0, "Press any key to continue")
+    stdscr.addstr(bsize + 1, 0, f"Puzzle complete! Min cost {cost}")
+    stdscr.addstr(bsize + 2, 0, "Press any key to continue")
     stdscr.getkey()
 
 
